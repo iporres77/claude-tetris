@@ -76,6 +76,14 @@ jobs:
                ### Preguntas abiertas
                Solo si falta información; si no, omite esta sección.
 
+               Formato: todo lo que comentes debe ser Markdown válido para GitHub (GitHub Flavored Markdown),
+               de modo que se renderice correctamente en el issue:
+                 - Escribe cada línea sin sangría inicial (4 espacios o más la convierten en bloque de código).
+                 - Deja una línea en blanco antes y después de encabezados, listas y bloques de código.
+                 - Usa `-` para listas, `**negrita**` para resaltar y comillas invertidas para código, rutas y funciones.
+                 - Usa bloques con triple comilla invertida y lenguaje (por ejemplo ```js) para fragmentos de código.
+                 - No uses HTML salvo el marcador `<!-- claude-triage -->` de la primera línea.
+
             5. Publica el diagnóstico pasándolo por stdin con un heredoc, en un único comando Bash:
                  gh issue comment ${{ github.event.issue.number }} --edit-last --create-if-none --body-file - <<'EOF'
                  ...diagnóstico...
