@@ -91,6 +91,19 @@ Después abre `http://localhost:8000` en el navegador.
 
 Además, el botón **Modo claro / Modo oscuro** del panel lateral cambia el tema. Por defecto el juego arranca en modo oscuro y la elección se recuerda en `localStorage`.
 
+### Skins
+
+El selector **SKIN** del panel lateral cambia el aspecto del tablero y de las piezas al instante, sin recargar. La elección se guarda en `localStorage` (clave `tetris-skin`).
+
+| Skin          | Aspecto                                                                                 |
+| ------------- | --------------------------------------------------------------------------------------- |
+| **Retro**     | Bloques cuadrados de color plano (estilo original). Sigue el tema claro/oscuro.         |
+| **Neón**      | Tablero negro, bloques con contorno luminoso (_glow_ con `shadowBlur`).                 |
+| **Pastel**    | Colores suaves sobre tablero crema, bloques con bordes redondeados.                     |
+| **Pixel art** | Tablero azul noche, bloques con bisel claro/oscuro y textura de subcuadros.             |
+
+El tema claro/oscuro controla siempre la interfaz de la página y, en la skin Retro, también la paleta y el tablero. Las demás skins tienen un tablero y una paleta propios que no cambian con el tema. Con el selector enfocado, las teclas de juego siguen moviendo la pieza (no cambian la skin).
+
 ---
 
 ## Cómo funciona
@@ -122,7 +135,8 @@ Contiene toda la lógica del juego. A grandes rasgos:
 - **Puntuación**: usa la tabla clásica `[0, 100, 300, 500, 800]` multiplicada por el nivel actual; el hard drop suma 2 puntos por celda recorrida y el soft drop 1 punto por fila.
 - **Nivel y velocidad**: el nivel sube cada 10 líneas; la velocidad de caída se calcula como `max(100, 1000 − (level − 1) × 90)` milisegundos.
 - **Hold** (`holdPiece`): si el hueco está vacío, guarda la pieza actual y saca la siguiente; si no, las intercambia (la pieza recuperada vuelve a la posición inicial). `holdUsed` lo bloquea hasta que `lockPiece()` asienta la pieza.
-- **Ghost piece** (`ghostY`): proyecta la posición final de la pieza actual hacia abajo y la dibuja con `globalAlpha = 0.2`.
+- **Ghost piece** (`ghostY`): proyecta la posición final de la pieza actual hacia abajo y la dibuja semitransparente (`ghostAlpha`, según tema y skin).
+- **Skins** (`SKINS`): cada skin define una función `look()` (paleta, color de rejilla, opacidad del fantasma y fondo del tablero) y un `drawBlock()` propio. `drawBlock(context, x, y, colorIndex, size, alpha)` delega en la skin activa y `applySkin()` aplica la combinación skin + tema.
 
 ### Flujo del juego
 
@@ -181,6 +195,8 @@ Algunos parámetros fáciles de tunear en `game.js`:
 | `BLOCK`        | Tamaño en píxeles de cada celda          | `30`                  |
 | `COLORS`       | Paleta de colores por tipo de pieza      | 8 colores             |
 | `COLORS_LIGHT` | Paleta de piezas para el tema claro      | 8 colores             |
+| `COLORS_NEON`, `COLORS_PASTEL`, `COLORS_PIXEL` | Paletas de las skins Neón, Pastel y Pixel art | 8 colores |
+| `SKINS`        | Skins disponibles (`look()` + `drawBlock()`) | retro, neon, pastel, pixel |
 | `LINE_SCORES`  | Puntos por 1, 2, 3 o 4 líneas eliminadas | `[0,100,300,500,800]` |
 | `dropInterval` | Velocidad inicial de caída en ms         | `1000`                |
 
