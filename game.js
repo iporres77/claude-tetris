@@ -26,6 +26,25 @@ const PIECES = [
   [[0,0,7],[7,7,7],[0,0,0]],                  // L
 ];
 
+// Paleta más saturada para el tema claro (mismo orden que COLORS)
+const COLORS_LIGHT = [
+  null,
+  '#00acc1', // I
+  '#f9a825', // O
+  '#8e24aa', // T
+  '#43a047', // S
+  '#e53935', // Z
+  '#1e88e5', // J
+  '#fb8c00', // L
+];
+
+const THEME_KEY = 'tetris-theme';
+let theme = 'dark';
+let palette = COLORS;
+let gridColor = '#22222e';
+let highlightColor = 'rgba(255,255,255,0.12)';
+let ghostAlpha = 0.2;
+
 const LINE_SCORES = [0, 100, 300, 500, 800];
 
 const canvas = document.getElementById('board');
@@ -39,6 +58,7 @@ const overlay = document.getElementById('overlay');
 const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
+const themeBtn = document.getElementById('theme-btn');
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
 
@@ -158,18 +178,18 @@ function updateHUD() {
 
 function drawBlock(context, x, y, colorIndex, size, alpha) {
   if (!colorIndex) return;
-  const color = COLORS[colorIndex];
+  const color = palette[colorIndex];
   context.globalAlpha = alpha ?? 1;
   context.fillStyle = color;
   context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
   // highlight
-  context.fillStyle = 'rgba(255,255,255,0.12)';
+  context.fillStyle = highlightColor;
   context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
   context.globalAlpha = 1;
 }
 
 function drawGrid() {
-  ctx.strokeStyle = '#22222e';
+  ctx.strokeStyle = gridColor;
   ctx.lineWidth = 0.5;
   for (let c = 1; c < COLS; c++) {
     ctx.beginPath();
@@ -199,7 +219,7 @@ function draw() {
   for (let r = 0; r < current.shape.length; r++)
     for (let c = 0; c < current.shape[r].length; c++)
       if (current.shape[r][c])
-        drawBlock(ctx, current.x + c, gy + r, current.shape[r][c], BLOCK, 0.2);
+        drawBlock(ctx, current.x + c, gy + r, current.shape[r][c], BLOCK, ghostAlpha);
 
   // current piece
   for (let r = 0; r < current.shape.length; r++)
@@ -300,5 +320,36 @@ document.addEventListener('keydown', e => {
 });
 
 restartBtn.addEventListener('click', init);
+
+function setTheme(newTheme, save = true) {
+  theme = newTheme === 'light' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = theme;
+  const css = getComputedStyle(document.documentElement);
+  palette = theme === 'light' ? COLORS_LIGHT : COLORS;
+  gridColor = css.getPropertyValue('--grid').trim();
+  highlightColor = css.getPropertyValue('--highlight').trim();
+  ghostAlpha = parseFloat(css.getPropertyValue('--ghost-alpha')) || 0.2;
+  themeBtn.textContent = theme === 'light' ? 'Modo oscuro' : 'Modo claro';
+  themeBtn.setAttribute('aria-pressed', String(theme === 'light'));
+  if (save) {
+    try { localStorage.setItem(THEME_KEY, theme); } catch (_) { /* sin almacenamiento */ }
+  }
+  // La vista previa no se redibuja por frame (p. ej. en pausa o game over)
+  if (next) drawNext();
+}
+
+themeBtn.addEventListener('click', () => {
+  setTheme(theme === 'light' ? 'dark' : 'light');
+  themeBtn.blur(); // evita que Space/flechas activen el botón
+});
+
+// Space en el botón no debe activarlo (Space es caída)
+themeBtn.addEventListener('keyup', e => {
+  if (e.code === 'Space') e.preventDefault();
+});
+
+let savedTheme = null;
+try { savedTheme = localStorage.getItem(THEME_KEY); } catch (_) { /* ignorar */ }
+setTheme(savedTheme === 'light' ? 'light' : 'dark', false);
 
 init();
