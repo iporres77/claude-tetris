@@ -224,3 +224,141 @@ kbd {
 #restart-btn:hover {
   background: var(--accent-hover);
 }
+
+/* ---- Tabla de récords y pantalla de inicio ---- */
+.hidden {
+  display: none !important;
+}
+
+.start-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--accent);
+}
+
+.records {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  max-width: 280px;
+}
+
+.records-table {
+  border-collapse: collapse;
+  font-size: 12px;
+  width: 270px;
+}
+
+.records-table th,
+.records-table td {
+  padding: 3px 5px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+}
+
+.records-table th {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--muted-text);
+  font-weight: 600;
+}
+
+.records-table td {
+  font-family: 'Courier New', Courier, monospace;
+  color: var(--text);
+}
+
+.records-table .rec-name {
+  text-align: left;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.records-table tr.highlight td {
+  color: var(--accent-text);
+  background: var(--accent);
+  font-weight: 700;
+}
+
+.records-empty {
+  font-size: 12px;
+  color: var(--muted-text);
+}
+
+.records-stats {
+  font-size: 12px;
+  color: var(--muted-text);
+}
+
+.record-msg {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.record-msg:empty {
+  display: none;
+}
+
+.record-form {
+  display: flex;
+  gap: 6px;
+}
+
+.record-form input {
+  width: 140px;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--board-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  user-select: text;
+}
+
+.record-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.rec-btn {
+  background: var(--accent);
+  color: var(--accent-text);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.15s;
+}
+
+.rec-btn:hover {
+  background: var(--accent-hover);
+}
+
+#start-btn {
+  padding: 10px 36px;
+  font-size: 15px;
+}
+
+.rec-btn-secondary {
+  background: transparent;
+  color: var(--muted-text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.rec-btn-secondary:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
